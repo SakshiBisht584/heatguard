@@ -3,129 +3,129 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>HeatGuard - Smart Weather Advisor</title>
+<title>HeatGuard - Smart Heat Advisor</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --fire: #FF4500; --ember: #FF6B35; --sun: #FFB627;
-    --sky: #1a1a2e; --sky2: #16213e; --sky3: #0f3460;
-    --cool: #00D4FF; --safe: #00E676; --warn: #FFB627;
-    --danger: #FF4500; --card: rgba(255,255,255,0.05);
-    --border: rgba(255,255,255,0.08); --text: #f0f0f0;
-    --muted: rgba(240,240,240,0.5);
+    --fire:#FF4500;--ember:#FF6B35;--sun:#FFB627;
+    --sky:#1a1a2e;--cool:#00D4FF;--safe:#00E676;--warn:#FFB627;
+    --card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);
+    --text:#f0f0f0;--muted:rgba(240,240,240,0.5);
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:var(--sky); color:var(--text); min-height:100vh; overflow-x:hidden; }
-  body::before {
-    content:''; position:fixed; inset:0;
-    background: radial-gradient(ellipse at 20% 20%, rgba(255,69,0,0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(0,212,255,0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 50%, rgba(22,33,62,1) 0%, rgba(15,52,96,0.8) 100%);
-    z-index:-1;
-  }
-  #notif-container { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:10px; max-width:340px; }
-  .notif-toast {
-    background:rgba(15,52,96,0.95); backdrop-filter:blur(20px);
-    border:1px solid var(--border); border-left:4px solid var(--fire);
-    border-radius:12px; padding:14px 18px; display:flex; align-items:flex-start;
-    gap:12px; animation:slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
-    box-shadow:0 8px 32px rgba(0,0,0,0.4);
-  }
-  .notif-toast.cool{border-left-color:var(--cool);}
-  .notif-toast.warn{border-left-color:var(--warn);}
-  .notif-toast.safe{border-left-color:var(--safe);}
-  .notif-icon{font-size:22px;flex-shrink:0;}
-  .notif-body{flex:1;}
-  .notif-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:3px;}
-  .notif-msg{font-size:12px;color:var(--muted);line-height:1.4;}
-  .notif-close{cursor:pointer;color:var(--muted);font-size:16px;flex-shrink:0;}
-  .notif-close:hover{color:white;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--sky);color:var(--text);min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(255,69,0,0.15) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(0,212,255,0.1) 0%,transparent 50%);z-index:-1;}
+
+  /* TOASTS */
+  #notif-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:340px;}
+  .toast{background:rgba(15,52,96,0.97);backdrop-filter:blur(20px);border:1px solid var(--border);border-left:4px solid var(--fire);border-radius:12px;padding:14px 18px;display:flex;align-items:flex-start;gap:12px;animation:slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+  .toast.cool{border-left-color:var(--cool);}
+  .toast.warn{border-left-color:var(--warn);}
+  .toast.safe{border-left-color:var(--safe);}
+  .toast-icon{font-size:20px;flex-shrink:0;}
+  .toast-body{flex:1;}
+  .toast-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:2px;}
+  .toast-msg{font-size:12px;color:var(--muted);line-height:1.4;}
+  .toast-close{cursor:pointer;color:var(--muted);font-size:14px;flex-shrink:0;}
   @keyframes slideIn{from{transform:translateX(120%);opacity:0;}to{transform:translateX(0);opacity:1;}}
   @keyframes fadeOut{to{opacity:0;transform:translateX(120%);}}
-  header {
-    padding:24px 32px; display:flex; align-items:center; justify-content:space-between;
-    border-bottom:1px solid var(--border); backdrop-filter:blur(10px);
-    position:sticky; top:0; z-index:100; background:rgba(26,26,46,0.8);
-  }
-  .logo { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; background:linear-gradient(135deg,var(--fire),var(--sun)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:-0.5px; }
-  .logo span{color:var(--cool);-webkit-text-fill-color:var(--cool);}
-  .header-right{display:flex;align-items:center;gap:16px;}
-  #city-input {
-    background:var(--card); border:1px solid var(--border); border-radius:10px;
-    padding:8px 14px; color:white; font-family:'DM Sans',sans-serif; font-size:14px;
-    outline:none; width:180px; transition:border-color 0.2s;
-  }
+
+  /* HEADER */
+  header{padding:20px 32px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;background:rgba(26,26,46,0.85);}
+  .logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(135deg,var(--fire),var(--sun));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .logo span{-webkit-text-fill-color:var(--cool);}
+  .header-right{display:flex;align-items:center;gap:12px;}
+  #city-input{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 14px;color:white;font-family:'DM Sans',sans-serif;font-size:14px;outline:none;width:170px;transition:border-color 0.2s;}
   #city-input:focus{border-color:var(--cool);}
   #city-input::placeholder{color:var(--muted);}
-  #refresh-btn {
-    background:linear-gradient(135deg,var(--fire),var(--ember)); border:none;
-    border-radius:10px; padding:8px 18px; color:white; font-family:'Syne',sans-serif;
-    font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; letter-spacing:0.5px;
-  }
-  #refresh-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,69,0,0.4);}
-  .live-badge{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--safe);font-weight:500;}
-  .live-dot{width:8px;height:8px;background:var(--safe);border-radius:50%;animation:pulse 1.5s infinite;}
-  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
-  main{padding:32px;max-width:1200px;margin:0 auto;}
+  #search-btn{background:linear-gradient(135deg,var(--fire),var(--ember));border:none;border-radius:10px;padding:8px 16px;color:white;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+  #search-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(255,69,0,0.4);}
+  .live-dot-wrap{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--safe);}
+  .live-dot{width:7px;height:7px;background:var(--safe);border-radius:50%;animation:pulse 1.5s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+  /* LAYOUT */
+  main{padding:28px 32px;max-width:1100px;margin:0 auto;}
+
+  /* LOADING */
   #loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 0;gap:16px;}
-  .spinner{width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--fire);border-radius:50%;animation:spin 0.8s linear infinite;}
+  .spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--fire);border-radius:50%;animation:spin 0.8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   #loading p{color:var(--muted);font-size:14px;}
-  #error-state{display:none;text-align:center;padding:60px 20px;}
-  #error-state .error-icon{font-size:48px;margin-bottom:16px;}
-  #error-state h3{font-family:'Syne',sans-serif;margin-bottom:8px;}
-  #error-state p{color:var(--muted);font-size:14px;}
+  #error-box{display:none;text-align:center;padding:60px 20px;}
+  #error-box h3{font-family:'Syne',sans-serif;margin-bottom:8px;}
+  #error-box p{color:var(--muted);font-size:14px;}
   #dashboard{display:none;}
-  .hero-card {
-    background:linear-gradient(135deg,rgba(255,69,0,0.2),rgba(255,182,39,0.1));
-    border:1px solid rgba(255,69,0,0.3); border-radius:24px; padding:36px;
-    margin-bottom:24px; display:grid; grid-template-columns:1fr auto;
-    gap:24px; align-items:center; position:relative; overflow:hidden;
-  }
-  .hero-card::before {
-    content:''; position:absolute; top:-50%; right:-10%; width:300px; height:300px;
-    background:radial-gradient(circle,rgba(255,182,39,0.15) 0%,transparent 70%); pointer-events:none;
-  }
-  .city-name{font-family:'Syne',sans-serif;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;}
-  .temperature{font-family:'Syne',sans-serif;font-size:80px;font-weight:800;line-height:1;background:linear-gradient(135deg,#fff 0%,var(--sun) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
-  .feels-like{font-size:14px;color:var(--muted);margin-bottom:16px;}
-  .weather-desc{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;text-transform:capitalize;margin-bottom:16px;}
-  .alert-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.5px;}
-  .alert-extreme{background:rgba(255,69,0,0.2);border:1px solid var(--fire);color:var(--fire);}
-  .alert-high{background:rgba(255,107,53,0.2);border:1px solid var(--ember);color:var(--ember);}
-  .alert-moderate{background:rgba(255,182,39,0.2);border:1px solid var(--warn);color:var(--warn);}
-  .alert-normal{background:rgba(0,230,118,0.2);border:1px solid var(--safe);color:var(--safe);}
-  .alert-cold{background:rgba(0,212,255,0.2);border:1px solid var(--cool);color:var(--cool);}
-  .weather-emoji{font-size:80px;line-height:1;}
-  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:transform 0.2s,border-color 0.2s;}
-  .stat-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.15);}
-  .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px;}
-  .stat-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:4px;}
+
+  /* MORNING BRIEFING — the star of the show */
+  .briefing-card{background:linear-gradient(135deg,rgba(255,69,0,0.18),rgba(255,182,39,0.08));border:1px solid rgba(255,107,53,0.35);border-radius:24px;padding:32px;margin-bottom:22px;}
+  .briefing-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;gap:20px;flex-wrap:wrap;}
+  .briefing-left{}
+  .briefing-city{font-size:13px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:6px;}
+  .briefing-headline{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.3;margin-bottom:10px;}
+  .briefing-sub{font-size:14px;color:var(--muted);line-height:1.5;}
+  .peak-badge{background:rgba(255,69,0,0.15);border:1px solid rgba(255,69,0,0.4);border-radius:16px;padding:16px 22px;text-align:center;flex-shrink:0;}
+  .peak-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:4px;}
+  .peak-temp{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;background:linear-gradient(135deg,#fff,var(--sun));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+  .peak-time{font-size:12px;color:var(--muted);margin-top:4px;}
+  .alert-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;}
+  .chip-extreme{background:rgba(255,69,0,0.2);border:1px solid var(--fire);color:var(--fire);}
+  .chip-danger{background:rgba(255,107,53,0.2);border:1px solid var(--ember);color:var(--ember);}
+  .chip-hot{background:rgba(255,182,39,0.2);border:1px solid var(--warn);color:var(--warn);}
+  .chip-warm{background:rgba(0,230,118,0.2);border:1px solid var(--safe);color:var(--safe);}
+  .chip-cool{background:rgba(0,212,255,0.2);border:1px solid var(--cool);color:var(--cool);}
+
+  /* PACK LIST */
+  .pack-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:22px;}
+  .pack-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;}
+  .pack-sub{font-size:13px;color:var(--muted);margin-bottom:18px;}
+  .pack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;}
+  .pack-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:13px;animation:fadeUp 0.4s ease both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .pack-emoji{font-size:20px;flex-shrink:0;}
+
+  /* HOURLY TIMELINE */
+  .timeline-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:22px;}
+  .timeline-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:18px;}
+  .timeline-grid{display:flex;flex-direction:column;gap:8px;}
+  .tl-row{display:flex;align-items:center;gap:12px;}
+  .tl-time{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;width:72px;flex-shrink:0;color:var(--muted);}
+  .tl-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+  .tl-bar{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1);}
+  .tl-temp{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;width:44px;text-align:right;flex-shrink:0;}
+  .tl-label{font-size:11px;width:74px;text-align:right;flex-shrink:0;}
+  .tl-now{background:rgba(255,255,255,0.06);border-radius:8px;padding:2px 6px;}
+
+  /* SMART REMINDERS */
+  .reminders-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-bottom:22px;}
+  .reminders-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;}
+  .reminders-sub{font-size:13px;color:var(--muted);margin-bottom:18px;}
+  .reminder-list{display:flex;flex-direction:column;gap:10px;}
+  .reminder-item{display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:12px 14px;animation:fadeUp 0.4s ease both;}
+  .r-time{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--cool);width:52px;flex-shrink:0;margin-top:1px;}
+  .r-emoji{font-size:18px;flex-shrink:0;}
+  .r-text{font-size:13px;line-height:1.5;color:rgba(240,240,240,0.85);}
+
+  /* STATS ROW */
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;transition:transform 0.2s;}
+  .stat-card:hover{transform:translateY(-3px);}
+  .stat-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px;}
+  .stat-val{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;margin-bottom:3px;}
   .stat-sub{font-size:12px;color:var(--muted);}
-  .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
-  .advice-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;}
-  .card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
-  .advice-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
-  .advice-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.03);border-radius:12px;border:1px solid var(--border);font-size:13px;line-height:1.5;animation:fadeUp 0.4s ease both;}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-  .advice-emoji{font-size:18px;flex-shrink:0;margin-top:1px;}
-  .advice-text{color:rgba(240,240,240,0.85);}
-  .schedule-list{display:flex;flex-direction:column;gap:8px;}
-  .schedule-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;font-size:13px;}
-  .schedule-time{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;width:80px;flex-shrink:0;color:var(--muted);}
-  .schedule-bar{flex:1;height:6px;border-radius:3px;background:var(--border);overflow:hidden;}
-  .schedule-fill{height:100%;border-radius:3px;transition:width 1s ease;}
-  .schedule-label{font-size:11px;width:80px;text-align:right;flex-shrink:0;}
-  .last-updated{text-align:center;color:var(--muted);font-size:12px;margin-top:24px;padding-top:24px;border-top:1px solid var(--border);}
-  #notif-banner{background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);border-radius:12px;padding:14px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;font-size:13px;}
-  #notif-banner button{background:var(--cool);color:#000;border:none;border-radius:8px;padding:7px 16px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
-  #notif-banner .dismiss{background:transparent;color:var(--muted);padding:7px;}
+
+  .notif-banner{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.25);border-radius:12px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;}
+  .notif-banner button{background:var(--cool);color:#000;border:none;border-radius:8px;padding:6px 14px;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .notif-banner .dismiss{background:transparent;color:var(--muted);padding:6px;}
+  .last-updated{text-align:center;color:var(--muted);font-size:12px;margin-top:20px;padding-top:18px;border-top:1px solid var(--border);}
+
   @media(max-width:768px){
-    main{padding:16px;} header{padding:16px;flex-wrap:wrap;gap:12px;}
-    .stats-grid{grid-template-columns:repeat(2,1fr);} .bottom-grid{grid-template-columns:1fr;}
-    .temperature{font-size:56px;} .hero-card{grid-template-columns:1fr;} .weather-emoji{display:none;}
-    #city-input{width:130px;}
+    main{padding:16px;}
+    header{padding:14px 16px;flex-wrap:wrap;gap:10px;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .peak-temp{font-size:40px;}
+    #city-input{width:120px;}
+    .pack-grid{grid-template-columns:1fr 1fr;}
   }
 </style>
 </head>
@@ -134,96 +134,117 @@
 <header>
   <div class="logo">Heat<span>Guard</span></div>
   <div class="header-right">
-    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="live-dot-wrap"><div class="live-dot"></div>LIVE</div>
     <input id="city-input" type="text" placeholder="Enter city..." value="Deoband"/>
-    <button id="refresh-btn" onclick="loadWeather()">Search</button>
+    <button id="search-btn" onclick="loadWeather()">Search</button>
   </div>
 </header>
 <main>
-  <div id="notif-banner">
-    <span>Enable browser notifications to get real-time heat alerts automatically</span>
+  <div class="notif-banner" id="notif-banner">
+    <span>Enable notifications to get water & health reminders throughout the day</span>
     <div style="display:flex;gap:8px">
-      <button onclick="requestNotifPermission()">Enable Alerts</button>
+      <button onclick="askNotifPermission()">Enable</button>
       <button class="dismiss" onclick="document.getElementById('notif-banner').style.display='none'">X</button>
     </div>
   </div>
-  <div id="loading"><div class="spinner"></div><p>Fetching live weather data...</p></div>
-  <div id="error-state">
-    <div class="error-icon">🌐</div>
-    <h3>Could not fetch weather</h3>
-    <p id="error-msg">Check city name or internet connection.</p>
-  </div>
+  <div id="loading"><div class="spinner"></div><p>Fetching today's full forecast...</p></div>
+  <div id="error-box"><h3>Could not fetch weather</h3><p id="error-msg">Check city name and try again.</p></div>
   <div id="dashboard">
-    <div class="hero-card">
-      <div>
-        <div class="city-name" id="d-city">--</div>
-        <div class="temperature" id="d-temp">--</div>
-        <div class="feels-like" id="d-feels">Feels like --</div>
-        <div class="weather-desc" id="d-desc">--</div>
-        <div id="d-alert" class="alert-badge">--</div>
+    <!-- Morning Briefing -->
+    <div class="briefing-card">
+      <div class="briefing-top">
+        <div class="briefing-left">
+          <div class="briefing-city" id="d-city">--</div>
+          <div class="briefing-headline" id="d-headline">Loading today's forecast...</div>
+          <div class="briefing-sub" id="d-sub"></div>
+          <br/>
+          <div id="d-chip" class="alert-chip">--</div>
+        </div>
+        <div style="display:flex;gap:14px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;">
+          <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:16px;padding:16px 22px;text-align:center;">
+            <div class="peak-label">Right Now</div>
+            <div style="font-family:'Syne',sans-serif;font-size:52px;font-weight:800;background:linear-gradient(135deg,#fff,var(--cool));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;" id="d-now-big">--</div>
+            <div class="peak-time" id="d-feels-big">Feels like --</div>
+          </div>
+          <div style="background:rgba(255,69,0,0.15);border:1px solid rgba(255,69,0,0.4);border-radius:16px;padding:16px 22px;text-align:center;">
+            <div class="peak-label">Today's Peak</div>
+            <div class="peak-temp" id="d-peak">--</div>
+            <div class="peak-time" id="d-peak-time">--</div>
+          </div>
+        </div>
       </div>
-      <div class="weather-emoji" id="d-emoji">☀️</div>
     </div>
+
+    <!-- Stats -->
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">Humidity</div><div class="stat-value" id="d-humidity" style="color:var(--cool)">--</div><div class="stat-sub">Relative humidity</div></div>
-      <div class="stat-card"><div class="stat-label">Wind Speed</div><div class="stat-value" id="d-wind" style="color:var(--safe)">--</div><div class="stat-sub">km/h</div></div>
-      <div class="stat-card"><div class="stat-label">Visibility</div><div class="stat-value" id="d-visibility" style="color:var(--warn)">--</div><div class="stat-sub">kilometres</div></div>
-      <div class="stat-card"><div class="stat-label">UV Index</div><div class="stat-value" id="d-uv" style="color:var(--fire)">--</div><div class="stat-sub" id="d-uv-label">--</div></div>
+      <div class="stat-card"><div class="stat-label">Humidity</div><div class="stat-val" id="d-hum" style="color:var(--cool)">--</div><div class="stat-sub">Relative humidity</div></div>
+      <div class="stat-card"><div class="stat-label">UV Index</div><div class="stat-val" id="d-uv" style="color:var(--fire)">--</div><div class="stat-sub" id="d-uv-lbl">--</div></div>
+      <div class="stat-card"><div class="stat-label">Wind</div><div class="stat-val" id="d-wind" style="color:var(--safe)">--</div><div class="stat-sub">km/h</div></div>
     </div>
-    <div class="bottom-grid">
-      <div class="advice-card"><div class="card-title">🎒 What to Carry Today</div><ul class="advice-list" id="d-carry"></ul></div>
-      <div class="advice-card"><div class="card-title">⚡ Do's and Don'ts</div><ul class="advice-list" id="d-dos"></ul></div>
-      <div class="advice-card" style="grid-column:1/-1"><div class="card-title">🕐 Best Times to Go Out Today</div><div class="schedule-list" id="d-schedule"></div></div>
+
+    <!-- What to Pack Today -->
+    <div class="pack-card">
+      <div class="pack-title">🎒 Pack Before You Leave</div>
+      <div class="pack-sub" id="pack-sub">Based on today's full forecast — not just current temp</div>
+      <div class="pack-grid" id="d-pack"></div>
     </div>
-    <div class="last-updated">Last updated: <span id="d-time">--</span> &nbsp;·&nbsp; Auto-refreshes every 10 minutes</div>
+
+    <!-- Hourly Timeline -->
+    <div class="timeline-card">
+      <div class="timeline-title">🌡️ Today's Temperature Timeline</div>
+      <div class="timeline-grid" id="d-timeline"></div>
+    </div>
+
+    <!-- Smart Day Reminders -->
+    <div class="reminders-card">
+      <div class="reminders-title">⏰ Smart Reminders for Today</div>
+      <div class="reminders-sub">Timed advice based on today's forecast — from morning to night</div>
+      <div class="reminder-list" id="d-reminders"></div>
+    </div>
+
+    <div class="last-updated">Last updated: <span id="d-time">--</span> &nbsp;·&nbsp; Auto-refreshes every 10 minutes &nbsp;·&nbsp; Data: wttr.in (nearest WMO weather station)</div>
   </div>
 </main>
 <script>
-// NO API KEY NEEDED - uses wttr.in (free, open, always works)
+// NO API KEY — uses wttr.in (free, open, instant)
+var notifPerm = Notification.permission;
+var scheduledNotifs = [];
 
-let notifPermission = Notification.permission;
-let lastAlertLevel = null;
-
-function requestNotifPermission() {
-  if (!("Notification" in window)) { showToast("!", "Not Supported", "Browser does not support notifications.", "warn"); return; }
-  Notification.requestPermission().then(p => {
-    notifPermission = p;
+function askNotifPermission() {
+  if (!("Notification" in window)) { toast("!", "Not supported", "Browser does not support notifications.", "warn"); return; }
+  Notification.requestPermission().then(function(p) {
+    notifPerm = p;
     if (p === "granted") {
       document.getElementById("notif-banner").style.display = "none";
-      showToast("OK", "Alerts Enabled", "You will get heat warnings automatically.", "safe");
+      toast("OK", "Reminders enabled", "You will get water and heat reminders throughout the day.", "safe");
     }
   });
 }
 
-function showToast(icon, title, msg, type) {
-  type = type || "danger";
-  var container = document.getElementById("notif-container");
-  var toast = document.createElement("div");
-  toast.className = "notif-toast " + type;
-  toast.innerHTML = '<div class="notif-icon">' + icon + '</div><div class="notif-body"><div class="notif-title">' + title + '</div><div class="notif-msg">' + msg + '</div></div><div class="notif-close" onclick="this.parentElement.remove()">X</div>';
-  container.appendChild(toast);
-  setTimeout(function() {
-    toast.style.animation = "fadeOut 0.4s ease forwards";
-    setTimeout(function() { if(toast.parentElement) toast.remove(); }, 400);
-  }, 6000);
+function toast(icon, title, msg, type) {
+  var c = document.getElementById("notif-container");
+  var el = document.createElement("div");
+  el.className = "toast " + (type || "danger");
+  el.innerHTML = '<div class="toast-icon">' + icon + '</div><div class="toast-body"><div class="toast-title">' + title + '</div><div class="toast-msg">' + msg + '</div></div><div class="toast-close" onclick="this.parentElement.remove()">X</div>';
+  c.appendChild(el);
+  setTimeout(function() { el.style.animation = "fadeOut 0.4s forwards"; setTimeout(function(){ if(el.parentElement) el.remove(); }, 400); }, 7000);
 }
 
-function sendBrowserNotif(title, body) {
-  if (notifPermission === "granted") {
-    new Notification(title, { body: body });
-  }
+function pushNotif(title, body) {
+  if (notifPerm === "granted") new Notification(title, { body: body });
 }
 
-function getHeatLevel(temp) {
-  if (temp >= 44) return { level: "EXTREME DANGER", cls: "alert-extreme", emoji: "🔥" };
-  if (temp >= 40) return { level: "DANGER",         cls: "alert-high",    emoji: "☀️" };
-  if (temp >= 35) return { level: "VERY HOT",        cls: "alert-moderate",emoji: "🌤️" };
-  if (temp >= 28) return { level: "WARM",             cls: "alert-normal",  emoji: "🌥️" };
-  if (temp >= 20) return { level: "PLEASANT",         cls: "alert-normal",  emoji: "⛅" };
-  return            { level: "COOL",              cls: "alert-cold",    emoji: "❄️" };
+// ── HEAT CLASSIFICATION ──────────────────────────────────────────────────
+function heatLevel(temp) {
+  if (temp >= 44) return { label: "EXTREME DANGER", chip: "chip-extreme", emoji: "🔥" };
+  if (temp >= 40) return { label: "DANGER",         chip: "chip-danger",  emoji: "☀️" };
+  if (temp >= 35) return { label: "VERY HOT",        chip: "chip-hot",    emoji: "🌤️" };
+  if (temp >= 28) return { label: "WARM",             chip: "chip-warm",   emoji: "🌥️" };
+  if (temp >= 20) return { label: "PLEASANT",         chip: "chip-warm",   emoji: "⛅" };
+  return                 { label: "COOL",             chip: "chip-cool",   emoji: "❄️" };
 }
 
-function getUVLabel(uv) {
+function uvLabel(uv) {
   if (uv >= 11) return "Extreme";
   if (uv >= 8)  return "Very High";
   if (uv >= 6)  return "High";
@@ -231,196 +252,346 @@ function getUVLabel(uv) {
   return "Low";
 }
 
-function generateCarry(temp, humidity, wind) {
-  var items = [];
-  if (temp >= 38) items.push({ e: "💧", t: "Carry at least 2 water bottles (500ml+)" });
-  else if (temp >= 30) items.push({ e: "💧", t: "Carry one water bottle, stay hydrated" });
-  if (temp >= 36) items.push({ e: "🧴", t: "Apply SPF 50+ sunscreen before leaving" });
-  if (temp >= 32) items.push({ e: "🧢", t: "Wear a cap or hat to block direct sunlight" });
-  if (temp >= 30) items.push({ e: "😎", t: "Carry sunglasses — UV levels are high" });
-  if (humidity > 70) items.push({ e: "👕", t: "Carry an extra light cotton shirt — high humidity means heavy sweating" });
-  if (temp >= 38) items.push({ e: "🥤", t: "Pack an ORS (Oral Rehydration Salt) packet" });
-  if (temp >= 40) items.push({ e: "🧊", t: "Consider a cold towel or cooling spray" });
-  if (temp < 20)  items.push({ e: "🧥", t: "Carry a light jacket — it's cool today" });
-  if (wind > 30)  items.push({ e: "🌬️", t: "Strong winds today — secure loose items in your bag" });
-  if (items.length === 0) items.push({ e: "✅", t: "Weather is pleasant — normal essentials are fine!" });
-  return items;
+function barColor(temp) {
+  if (temp >= 44) return "#FF4500";
+  if (temp >= 40) return "#FF6B35";
+  if (temp >= 35) return "#FFB627";
+  if (temp >= 28) return "#00E676";
+  return "#00D4FF";
 }
 
-function generateDos(temp, humidity) {
+// ── PACK LIST — based on WHOLE DAY forecast ───────────────────────────────
+function isRainy(desc) {
+  var d = (desc || "").toLowerCase();
+  return d.indexOf("rain") >= 0 || d.indexOf("drizzle") >= 0 || d.indexOf("shower") >= 0 || d.indexOf("thunder") >= 0 || d.indexOf("storm") >= 0 || d.indexOf("sleet") >= 0;
+}
+function isCloudy(desc) {
+  var d = (desc || "").toLowerCase();
+  return d.indexOf("cloud") >= 0 || d.indexOf("overcast") >= 0 || d.indexOf("mist") >= 0 || d.indexOf("fog") >= 0 || d.indexOf("haze") >= 0;
+}
+function isThunder(desc) {
+  var d = (desc || "").toLowerCase();
+  return d.indexOf("thunder") >= 0 || d.indexOf("storm") >= 0 || d.indexOf("lightning") >= 0;
+}
+
+function buildPackList(peakTemp, maxUV, maxHumidity, maxWind, weatherDescs) {
   var items = [];
-  if (temp >= 40) {
-    items.push({ e: "🚫", t: "AVOID going out between 11 AM - 4 PM" });
-    items.push({ e: "🏥", t: "If you feel dizzy or nauseous, find shade immediately" });
-    items.push({ e: "🥗", t: "Eat light meals — avoid spicy or heavy food" });
-    items.push({ e: "🏃", t: "Skip outdoor exercise today — heat stroke risk is HIGH" });
-  } else if (temp >= 35) {
-    items.push({ e: "⏰", t: "Go out early morning (before 10 AM) or evening (after 5 PM)" });
-    items.push({ e: "🥗", t: "Prefer salads, fruits, lassi, and cold foods today" });
-    items.push({ e: "🚿", t: "Take a cool shower after being outdoors" });
-  } else if (temp >= 28) {
-    items.push({ e: "✅", t: "Normal outdoor activity is fine" });
-    items.push({ e: "💧", t: "Keep drinking water even if not thirsty" });
-  } else {
-    items.push({ e: "🌿", t: "Great weather for outdoor activities!" });
-    items.push({ e: "🏃", t: "Good time for morning jog or walk" });
+  var rainToday = weatherDescs.some(isRainy);
+  var thunderToday = weatherDescs.some(isThunder);
+  var cloudyToday = weatherDescs.some(isCloudy);
+
+  // Rain-specific items FIRST — most important
+  if (thunderToday) {
+    items.push({ e: "⛈️", t: "STORM warning — avoid open areas and trees" });
+    items.push({ e: "☂️", t: "Carry a strong umbrella or raincoat" });
+  } else if (rainToday) {
+    items.push({ e: "🌧️", t: "Rain expected today — carry umbrella" });
+    items.push({ e: "👟", t: "Wear waterproof or closed shoes" });
+    items.push({ e: "👜", t: "Use a waterproof bag cover or plastic bag inside" });
   }
-  if (humidity > 75) items.push({ e: "💦", t: "Very humid — your sweat won't cool you; take extra breaks" });
-  if (temp >= 38)    items.push({ e: "📱", t: "Check on elderly family members — they're at higher risk" });
+
+  // Water
+  if (peakTemp >= 40) items.push({ e: "💧", t: "2+ water bottles (min 1 litre)" });
+  else if (peakTemp >= 32) items.push({ e: "💧", t: "1 water bottle, stay hydrated" });
+
+  // ORS
+  if (peakTemp >= 38) items.push({ e: "🥤", t: "ORS packet (Electral/Glucon-D)" });
+
+  // Sunscreen — skip if heavily cloudy/rainy
+  if (maxUV >= 6 && !rainToday) items.push({ e: "🧴", t: "Sunscreen SPF 50+" });
+
+  // Umbrella for sun — only if no rain umbrella already added
+  if (!rainToday && (maxUV >= 8 || peakTemp >= 38)) items.push({ e: "☂️", t: "Umbrella or parasol (sun protection)" });
+
+  // Cap — skip if raining
+  if (peakTemp >= 32 && !rainToday) items.push({ e: "🧢", t: "Cap or hat" });
+
+  // Sunglasses — skip if cloudy/rainy
+  if (maxUV >= 5 && !cloudyToday && !rainToday) items.push({ e: "😎", t: "Sunglasses (UV protection)" });
+
+  // Extra shirt
+  if (maxHumidity > 70 || peakTemp >= 38) items.push({ e: "👕", t: "Extra light cotton shirt" });
+
+  // Cool towel
+  if (peakTemp >= 42) items.push({ e: "🧊", t: "Wet/cool towel for neck" });
+
+  // Light food
+  if (peakTemp >= 36 && !rainToday) items.push({ e: "🍉", t: "Carry fruits (watermelon, mango)" });
+
+  // Jacket — cold or rainy
+  if (peakTemp < 20 || (rainToday && peakTemp < 28)) items.push({ e: "🧥", t: "Light jacket" });
+
+  // Wind
+  if (maxWind > 35) items.push({ e: "🌬️", t: "Strong winds — secure loose items" });
+
+  if (items.length === 0) items.push({ e: "✅", t: "Normal essentials — pleasant day!" });
   return items;
 }
 
-function generateSchedule(temp) {
-  var slots = [
-    { time: "6-8 AM",   heat: Math.max(0, temp - 8) },
-    { time: "8-10 AM",  heat: Math.max(0, temp - 5) },
-    { time: "10-12 PM", heat: temp - 1 },
-    { time: "12-2 PM",  heat: temp + 2 },
-    { time: "2-4 PM",   heat: temp + 1 },
-    { time: "4-6 PM",   heat: temp - 2 },
-    { time: "6-8 PM",   heat: temp - 5 },
-    { time: "8-10 PM",  heat: Math.max(0, temp - 8) },
-  ];
-  var max = Math.max.apply(null, slots.map(function(s){ return s.heat; }));
-  return slots.map(function(s) {
-    var pct = Math.round((s.heat / (max + 5)) * 100);
-    var color, rating;
-    if      (s.heat >= 42) { color = "#FF4500"; rating = "Dangerous"; }
-    else if (s.heat >= 38) { color = "#FF6B35"; rating = "Very Hot"; }
-    else if (s.heat >= 34) { color = "#FFB627"; rating = "Hot"; }
-    else if (s.heat >= 28) { color = "#00E676"; rating = "Warm"; }
-    else                   { color = "#00D4FF"; rating = "Cool"; }
-    return { time: s.time, heat: s.heat, pct: pct, color: color, rating: rating };
-  });
+// ── SMART REMINDERS — timed throughout the day ────────────────────────────
+function buildReminders(peakTemp, peakHour, maxUV, hourlyData, hasRain, hasThunder) {
+  var reminders = [];
+  var now = new Date();
+  var curHour = now.getHours();
+
+  // Morning reminder (show if before 9am or always for full-day view)
+  var rainMsg = hasRain ? " Rain is expected today — carry umbrella and waterproof shoes." : "";
+  reminders.push({ time: "6–8 AM", emoji: hasRain ? "🌧️" : "🌅", text: "Good morning! Today: " + peakTemp + "°C peak." + rainMsg + " Pack your bag before leaving." });
+  if (hasRain && hasThunder) {
+    reminders.push({ time: "Warning", emoji: "⚡", text: "THUNDERSTORM expected today. Avoid open fields, tall trees, and metal objects. Stay indoors during the storm." });
+  } else if (hasRain) {
+    reminders.push({ time: "Today", emoji: "💧", text: "Wet day ahead. Roads may be slippery. Allow extra travel time. Keep your phone in a waterproof pouch." });
+  }
+
+  if (peakTemp >= 35) {
+    reminders.push({ time: "9 AM",  emoji: "💧", text: "Drink a full glass of water before heading out. Hydration starts before you sweat." });
+  }
+
+  if (peakTemp >= 38) {
+    reminders.push({ time: "11 AM", emoji: "⚠️", text: "Heat is rising. If you're outdoors, find shade. Drink water every 30 minutes even if not thirsty." });
+  }
+
+  if (peakTemp >= 40) {
+    reminders.push({ time: "12–2 PM", emoji: "🔥", text: "PEAK HEAT TIME. Avoid direct sun. If you must be outside, use umbrella and drink ORS. Watch for dizziness — that's a heat stroke warning." });
+  } else if (peakTemp >= 35) {
+    reminders.push({ time: "12–2 PM", emoji: "☀️", text: "Hottest part of the day. Take a break if outdoors. Drink water and eat something light — avoid spicy food." });
+  }
+
+  if (peakTemp >= 36) {
+    reminders.push({ time: "1 PM",   emoji: "🍉", text: "Eat seasonal fruits: watermelon, mango, cucumber. They hydrate and cool your body naturally." });
+  }
+
+  if (peakTemp >= 38) {
+    reminders.push({ time: "2–3 PM", emoji: "🥤", text: "Drink your ORS or Glucon-D now. This replaces salts lost through sweating — water alone is not enough in extreme heat." });
+  }
+
+  if (peakTemp >= 35) {
+    reminders.push({ time: "3 PM",   emoji: "😮‍💨", text: "If you feel unusually tired, dizzy or have a headache — go indoors immediately and drink cold water. These are early heat exhaustion signs." });
+  }
+
+  if (peakTemp >= 32) {
+    reminders.push({ time: "4–5 PM", emoji: "🌇", text: "Temperature starting to ease. Safe to resume outdoor activities. Keep drinking water." });
+  }
+
+  reminders.push({ time: "6–7 PM",   emoji: "🚿", text: "Take a cool shower after coming home. It lowers body temperature and prevents heat rashes." });
+
+  if (peakTemp >= 36) {
+    reminders.push({ time: "7 PM",   emoji: "🥗", text: "Eat a light dinner tonight — heavy/oily food increases body heat. Prefer dal, curd, salad, or lassi." });
+  }
+
+  if (peakTemp >= 38) {
+    reminders.push({ time: "9 PM",   emoji: "💤", text: "Drink one more glass of water before sleeping. Sleep in cotton clothes. Keep a window open if possible." });
+    reminders.push({ time: "Tonight", emoji: "📱", text: "Check on elderly family members and children — they lose body heat slower and are at higher risk." });
+  }
+
+  return reminders;
 }
 
-function renderDashboard(temp, feels, humidity, wind, visibility, desc, cityName, uv) {
-  var heat = getHeatLevel(temp);
+// ── RENDER ────────────────────────────────────────────────────────────────
+function render(data) {
+  var curr = data.current_condition[0];
+  var today = data.weather[0];
+  var area = data.nearest_area[0];
 
+  var nowTemp    = parseInt(curr.temp_C);
+  var feelsLike  = parseInt(curr.FeelsLikeC);
+  var humidity   = parseInt(curr.humidity);
+  var wind       = parseInt(curr.windspeedKmph);
+  var uvNow      = parseInt(curr.uvIndex);
+  var cityName   = area.areaName[0].value + ", " + area.country[0].value;
+
+  var maxTemp    = parseInt(today.maxtempC);
+  var minTemp    = parseInt(today.mintempC);
+  var maxUV      = parseInt(today.uvIndex);
+
+  // Find peak hour from hourly data + collect weather descriptions
+  var hourly = today.hourly;
+  var peakHour = 12;
+  var peakT = maxTemp;
+  var maxHumidity = humidity;
+  var maxWind = wind;
+  var weatherDescs = [curr.weatherDesc[0].value]; // start with current
+  hourly.forEach(function(h) {
+    var t = parseInt(h.tempC);
+    var hum = parseInt(h.humidity);
+    var w = parseInt(h.windspeedKmph);
+    if (t >= peakT) { peakT = t; peakHour = Math.round(parseInt(h.time) / 100); }
+    if (hum > maxHumidity) maxHumidity = hum;
+    if (w > maxWind) maxWind = w;
+    if (h.weatherDesc && h.weatherDesc[0]) weatherDescs.push(h.weatherDesc[0].value);
+  });
+  var hasRain = weatherDescs.some(isRainy);
+  var hasThunder = weatherDescs.some(isThunder);
+  var hasClouds = weatherDescs.some(isCloudy);
+
+  var heat = heatLevel(maxTemp);
+
+  // If rain/storm — override headline
+  var weatherOverride = hasThunder ? "⛈️ Thunderstorm expected today. Stay safe indoors." :
+                        hasRain    ? "🌧️ Rain expected today. Carry umbrella and waterproof shoes." : null;
+
+  // ── BRIEFING ──
   document.getElementById("d-city").textContent = cityName;
-  document.getElementById("d-temp").textContent = temp + "°C";
-  document.getElementById("d-feels").textContent = "Feels like " + feels + "°C";
-  document.getElementById("d-desc").textContent = desc;
-  document.getElementById("d-emoji").textContent = heat.emoji;
+  var headlines = {
+    "EXTREME DANGER": "Dangerous heat today. Stay indoors if possible.",
+    "DANGER":         "Very dangerous heat. Plan your day carefully.",
+    "VERY HOT":       "Hot day ahead. Pack smart before you leave.",
+    "WARM":           "Warm day. Stay hydrated and take it easy.",
+    "PLEASANT":       "Pleasant day ahead. Enjoy it!",
+    "COOL":           "Cool day. Light jacket recommended."
+  };
+  document.getElementById("d-headline").textContent = weatherOverride || (heat.emoji + " " + (headlines[heat.label] || "Check today's forecast."));
+  var conditionSummary = hasThunder ? "⛈️ Thunderstorm" : hasRain ? "🌧️ Rain" : hasClouds ? "☁️ Cloudy" : "☀️ Sunny";
+  document.getElementById("d-sub").textContent = "Today: " + minTemp + "\u00b0C \u2013 " + maxTemp + "\u00b0C  |  " + conditionSummary + "  |  UV: " + uvLabel(maxUV) + "  |  Peak ~" + (peakHour > 12 ? (peakHour-12)+"PM" : peakHour+"AM");
+  var chip = document.getElementById("d-chip");
+  chip.className = "alert-chip " + heat.chip;
+  chip.textContent = "\u26a1 " + heat.label;
 
-  var alertEl = document.getElementById("d-alert");
-  alertEl.className = "alert-badge " + heat.cls;
-  alertEl.textContent = "⚡ " + heat.level;
+  document.getElementById("d-peak").textContent = maxTemp + "\u00b0C";
+  document.getElementById("d-peak-time").textContent = "Around " + (peakHour > 12 ? (peakHour-12)+":00 PM" : peakHour+":00 AM");
 
-  document.getElementById("d-humidity").textContent = humidity + "%";
+  // ── STATS ──
+  document.getElementById("d-now-big").textContent = nowTemp + "\u00b0C";
+  document.getElementById("d-feels-big").textContent = "Feels like " + feelsLike + "\u00b0C";
+  
+  document.getElementById("d-hum").textContent = humidity + "%";
+  document.getElementById("d-uv").textContent = uvNow;
+  document.getElementById("d-uv-lbl").textContent = uvLabel(uvNow);
   document.getElementById("d-wind").textContent = wind;
-  document.getElementById("d-visibility").textContent = visibility;
-  document.getElementById("d-uv").textContent = uv;
-  document.getElementById("d-uv-label").textContent = getUVLabel(uv);
 
-  var carryList = document.getElementById("d-carry");
-  carryList.innerHTML = "";
-  generateCarry(temp, humidity, wind).forEach(function(item, i) {
-    var li = document.createElement("li");
-    li.className = "advice-item";
-    li.style.animationDelay = (i * 0.07) + "s";
-    li.innerHTML = '<span class="advice-emoji">' + item.e + '</span><span class="advice-text">' + item.t + '</span>';
-    carryList.appendChild(li);
-  });
-
-  var dosList = document.getElementById("d-dos");
-  dosList.innerHTML = "";
-  generateDos(temp, humidity).forEach(function(item, i) {
-    var li = document.createElement("li");
-    li.className = "advice-item";
-    li.style.animationDelay = (i * 0.07) + "s";
-    li.innerHTML = '<span class="advice-emoji">' + item.e + '</span><span class="advice-text">' + item.t + '</span>';
-    dosList.appendChild(li);
-  });
-
-  var schedEl = document.getElementById("d-schedule");
-  schedEl.innerHTML = "";
-  generateSchedule(temp).forEach(function(s) {
+  // ── PACK LIST ──
+  var packEl = document.getElementById("d-pack");
+  packEl.innerHTML = "";
+  document.getElementById("pack-sub").textContent = "Based on today's full forecast: peak " + maxTemp + "\u00b0C, UV " + uvLabel(maxUV);
+  buildPackList(maxTemp, maxUV, maxHumidity, maxWind, weatherDescs).forEach(function(item, i) {
     var div = document.createElement("div");
-    div.className = "schedule-item";
-    div.innerHTML = '<div class="schedule-time">' + s.time + '</div><div class="schedule-bar"><div class="schedule-fill" style="width:0%;background:' + s.color + '" data-pct="' + s.pct + '"></div></div><div class="schedule-label" style="color:' + s.color + '">' + s.rating + '</div>';
-    schedEl.appendChild(div);
+    div.className = "pack-item";
+    div.style.animationDelay = (i * 0.06) + "s";
+    div.innerHTML = '<span class="pack-emoji">' + item.e + '</span><span>' + item.t + '</span>';
+    packEl.appendChild(div);
   });
 
+  // ── HOURLY TIMELINE ──
+  var tlEl = document.getElementById("d-timeline");
+  tlEl.innerHTML = "";
+  var nowHour = new Date().getHours();
+  var maxTL = Math.max.apply(null, hourly.map(function(h){ return parseInt(h.tempC); })) + 3;
+  hourly.forEach(function(h) {
+    var t = parseInt(h.tempC);
+    var hr = Math.round(parseInt(h.time) / 100);
+    var label = hr === 0 ? "12 AM" : hr < 12 ? hr + " AM" : hr === 12 ? "12 PM" : (hr-12) + " PM";
+    var pct = Math.round((t / maxTL) * 100);
+    var isNow = Math.abs(hr - nowHour) <= 1;
+    var row = document.createElement("div");
+    row.className = "tl-row" + (isNow ? " tl-now" : "");
+    var hDesc = (h.weatherDesc && h.weatherDesc[0]) ? h.weatherDesc[0].value : "";
+    var hIcon = isThunder(hDesc) ? "⛈️" : isRainy(hDesc) ? "🌧️" : isCloudy(hDesc) ? "☁️" : t >= 38 ? "🔥" : t >= 32 ? "☀️" : "🌤️";
+    row.innerHTML = '<div class="tl-time">' + label + (isNow ? " &#x25C4;" : "") + '</div>' +
+      '<div style="font-size:14px;flex-shrink:0">' + hIcon + '</div>' +
+      '<div class="tl-bar-wrap"><div class="tl-bar" style="width:0%;background:' + barColor(t) + '" data-pct="' + pct + '"></div></div>' +
+      '<div class="tl-temp" style="color:' + barColor(t) + '">' + t + '\u00b0</div>' +
+      '<div class="tl-label" style="color:' + barColor(t) + ';font-size:11px">' + heatLevel(t).label + '</div>';
+    tlEl.appendChild(row);
+  });
   setTimeout(function() {
-    document.querySelectorAll(".schedule-fill").forEach(function(el) {
+    document.querySelectorAll(".tl-bar").forEach(function(el) {
       el.style.width = el.getAttribute("data-pct") + "%";
     });
-  }, 100);
+  }, 150);
+
+  // ── SMART REMINDERS ──
+  var remEl = document.getElementById("d-reminders");
+  remEl.innerHTML = "";
+  buildReminders(maxTemp, peakHour, maxUV, hourly, hasRain, hasThunder).forEach(function(r, i) {
+    var div = document.createElement("div");
+    div.className = "reminder-item";
+    div.style.animationDelay = (i * 0.07) + "s";
+    div.innerHTML = '<div class="r-time">' + r.time + '</div><div class="r-emoji">' + r.emoji + '</div><div class="r-text">' + r.text + '</div>';
+    remEl.appendChild(div);
+  });
 
   document.getElementById("d-time").textContent = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) + " IST";
 
-  // Notifications
-  var alertLevel = heat.level;
-  if (alertLevel !== lastAlertLevel) {
-    lastAlertLevel = alertLevel;
-    if (temp >= 44) {
-      showToast("🔥", "EXTREME HEAT ALERT", temp + "°C in " + cityName + "! Stay indoors, carry ORS.", "danger");
-      sendBrowserNotif("EXTREME HEAT in " + cityName, "Temperature: " + temp + "°C. Stay indoors 11AM-4PM. Carry ORS and water.");
-    } else if (temp >= 40) {
-      showToast("☀️", "Heat Danger Alert", temp + "°C in " + cityName + ". Avoid peak hours outdoors.", "danger");
-      sendBrowserNotif("Heat Danger - " + cityName, "It's " + temp + "°C outside. Carry water, sunscreen and wear a cap.");
-    } else if (temp >= 35) {
-      showToast("🌤️", "Very Hot Today", temp + "°C in " + cityName + ". Pack water and sunscreen.", "warn");
-    } else if (temp < 15) {
-      showToast("❄️", "Cold Weather Alert", temp + "°C in " + cityName + ". Carry a jacket.", "cool");
+  // ── NOTIFICATIONS ──
+  if (hasThunder) {
+    toast("⛈️", "THUNDERSTORM ALERT", "Storm expected in " + area.areaName[0].value + ". Carry umbrella, avoid open areas.", "danger");
+    pushNotif("⛈️ Thunderstorm Alert - " + area.areaName[0].value, "Thunderstorm expected today. Stay indoors during the storm.");
+  } else if (hasRain) {
+    toast("🌧️", "Rain Expected Today", "Carry umbrella and waterproof shoes in " + area.areaName[0].value + ".", "warn");
+    pushNotif("🌧️ Rain Today - " + area.areaName[0].value, "Rain expected today. Carry umbrella and wear waterproof shoes.");
+  } else if (maxTemp >= 44) {
+    toast("🔥", "EXTREME HEAT TODAY", "Peak: " + maxTemp + "\u00b0C in " + area.areaName[0].value + ". Pack ORS, 2 bottles, umbrella.", "danger");
+    pushNotif("EXTREME HEAT TODAY - " + area.areaName[0].value, "Peak " + maxTemp + "\u00b0C. Pack ORS, 2 water bottles and umbrella before leaving.");
+  } else if (maxTemp >= 40) {
+    toast("☀️", "Danger Heat Today", "Peak: " + maxTemp + "\u00b0C. Carry water, ORS and umbrella.", "danger");
+    pushNotif("Heat Danger - " + area.areaName[0].value, "Peak " + maxTemp + "\u00b0C today. Carry water and ORS.");
+  } else if (maxTemp >= 35) {
+    toast("🌤️", "Hot Day Ahead", "Peak: " + maxTemp + "\u00b0C. Pack water and sunscreen.", "warn");
+  }
+
+  // Schedule timed water reminders
+  scheduleDayReminders(maxTemp, area.areaName[0].value);
+}
+
+// ── SCHEDULE TIMED NOTIFICATIONS ─────────────────────────────────────────
+function scheduleDayReminders(peakTemp, city) {
+  // Clear old timers
+  scheduledNotifs.forEach(function(t){ clearTimeout(t); });
+  scheduledNotifs = [];
+  if (notifPerm !== "granted") return;
+
+  var now = new Date();
+  function scheduleAt(hour, min, title, body) {
+    var target = new Date();
+    target.setHours(hour, min, 0, 0);
+    var ms = target - now;
+    if (ms > 0 && ms < 24*60*60*1000) {
+      scheduledNotifs.push(setTimeout(function() {
+        pushNotif(title, body);
+        toast(title.charAt(0), title, body, "warn");
+      }, ms));
     }
   }
-}
 
-async function loadWeather() {
-  var city = document.getElementById("city-input").value.trim() || "Deoband";
-
-  document.getElementById("loading").style.display = "flex";
-  document.getElementById("dashboard").style.display = "none";
-  document.getElementById("error-state").style.display = "none";
-
-  try {
-    // wttr.in - completely free, no API key, works instantly
-    var url = "https://wttr.in/" + encodeURIComponent(city) + "?format=j1";
-    var res = await fetch(url);
-
-    if (!res.ok) throw new Error("City not found. Try another city name.");
-
-    var data = await res.json();
-    var curr = data.current_condition[0];
-    var area = data.nearest_area[0];
-
-    var temp      = parseInt(curr.temp_C);
-    var feels     = parseInt(curr.FeelsLikeC);
-    var humidity  = parseInt(curr.humidity);
-    var wind      = parseInt(curr.windspeedKmph);
-    var visibility= parseFloat(curr.visibility);
-    var desc      = curr.weatherDesc[0].value;
-    var uv        = parseInt(curr.uvIndex);
-    var cityName  = area.areaName[0].value + ", " + area.country[0].value;
-
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
-
-    renderDashboard(temp, feels, humidity, wind, visibility, desc, cityName, uv);
-
-  } catch (err) {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("error-state").style.display = "block";
-    document.getElementById("error-msg").textContent = err.message;
-    showToast("X", "Fetch Failed", err.message, "warn");
+  if (peakTemp >= 32) {
+    scheduleAt(9,  0,  "💧 Time to hydrate!", "Drink a full glass of water before heading out.");
+    scheduleAt(11, 0,  "💧 Water reminder", "Drink water now. Heat is rising in " + city + ".");
+    scheduleAt(13, 0,  "🔥 Peak heat alert", "Hottest part of the day. Stay in shade if possible.");
+    scheduleAt(14, 30, "🥤 ORS reminder", "Drink your ORS or Glucon-D now to replace lost salts.");
+    scheduleAt(16, 0,  "🍉 Healthy tip", "Eat watermelon, cucumber or mango — they cool your body naturally.");
+    scheduleAt(18, 0,  "✅ Heat easing", "Temperature dropping. Safe to go out now. Stay hydrated!");
+    scheduleAt(21, 0,  "💤 Night reminder", "Drink water before sleeping. Sleep in cotton. Check on elderly family.");
   }
 }
 
-document.getElementById("city-input").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") loadWeather();
-});
+// ── FETCH ─────────────────────────────────────────────────────────────────
+async function loadWeather() {
+  var city = document.getElementById("city-input").value.trim() || "Deoband";
+  document.getElementById("loading").style.display = "flex";
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("error-box").style.display = "none";
 
-setInterval(function() {
-  loadWeather();
-  showToast("🔄", "Auto Refreshed", "Live weather data updated.", "safe");
-}, 10 * 60 * 1000);
-
-if (Notification.permission === "granted") {
-  document.getElementById("notif-banner").style.display = "none";
+  try {
+    var res = await fetch("https://wttr.in/" + encodeURIComponent(city) + "?format=j1");
+    if (!res.ok) throw new Error("City not found. Try another name.");
+    var text = await res.text();
+    var data;
+    try { data = JSON.parse(text); } catch(pe) { throw new Error("Weather service returned invalid data. Try again in a moment."); }
+    if (!data.current_condition || !data.weather) throw new Error("Incomplete data received. Try again.");
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
+    render(data);
+  } catch(e) {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("error-box").style.display = "block";
+    document.getElementById("error-msg").textContent = e.message;
+    toast("X", "Error", e.message, "warn");
+  }
 }
 
+document.getElementById("city-input").addEventListener("keydown", function(e){ if(e.key==="Enter") loadWeather(); });
+setInterval(function(){ loadWeather(); }, 10*60*1000);
+if (Notification.permission === "granted") document.getElementById("notif-banner").style.display = "none";
 loadWeather();
 </script>
 </body>
